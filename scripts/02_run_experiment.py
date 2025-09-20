@@ -9,6 +9,8 @@ import time
 from datetime import datetime, timezone
 
 import yaml
+import urllib.request
+import urllib.error
 
 
 def read_text(path: str) -> str:
@@ -49,8 +51,36 @@ def build_prompt(system_text: str, template_text: str, question_text: str) -> st
     return system_text + "\n\n" + template_text.replace("{{QUESTION}}", question_text).replace("{{QUESTION_WORDS}}", question_text)
 
 
+def _call_ollama_http(model: str, prompt: str, temperature: float, top_p: float, max_tokens: int) -> str:
+    payload = {
+        "model": model,
+        "prompt": prompt,
+        "options": {
+            "temperature": temperature,
+            "top_p": top_p,
+            "num_predict": max_tokens,
+        },
+        "stream": False,
+    }
+    data = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        url="http://127.0.0.1:11434/api/generate",
+        data=data,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=600) as resp:
+            body = resp.read().decode("utf-8")
+            obj = json.loads(body)
+            return (obj.get("response") or "").strip()
+    except urllib.error.URLError as e:
+        sys.stderr.write(str(e) + "\n")
+        return ""
+
+
 def call_ollama(model: str, prompt: str, temperature: float, top_p: float, max_tokens: int) -> str:
-    # Prefer CLI to avoid HTTP dependency
+    # Try CLI first
     cmd = [
         "ollama", "run", model,
         "--temperature", str(temperature),
@@ -61,9 +91,9 @@ def call_ollama(model: str, prompt: str, temperature: float, top_p: float, max_t
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
         return result.stdout.strip()
-    except subprocess.CalledProcessError as e:
-        sys.stderr.write(e.stderr)
-        return ""
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        # Fallback to HTTP API
+        return _call_ollama_http(model, prompt, temperature, top_p, max_tokens)
 
 
 def main() -> None:
