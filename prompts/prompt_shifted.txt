@@ -1,0 +1,5 @@
+Solve the following arithmetic problem written in words. Provide only the final numeric answer on the last line.
+
+Question: {{QUESTION_WORDS}}
+
+

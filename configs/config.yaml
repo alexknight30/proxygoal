@@ -1,0 +1,24 @@
+model: "phi3:mini"
+temperature: 0.2
+top_p: 0.95
+max_tokens: 64
+
+dataset:
+  n_questions: 100
+  a_min: 1
+  a_max: 20
+  ops: ["+", "-"]
+
+paths:
+  datasets_dir: "data/datasets"
+  runs_dir: "data/runs"
+  tables_dir: "results/tables"
+  figures_dir: "results/figures"
+
+prompts:
+  system: "prompts/base_system.txt"
+  normal: "prompts/prompt_normal.txt"
+  proxy: "prompts/prompt_proxy_hack.txt"
+  shifted: "prompts/prompt_shifted.txt"
+
+
