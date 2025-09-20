@@ -1,0 +1,20 @@
+This file summarizes both the 100-question and 2,500-question experiments.
+
+Files:
+- 100-question summary: results/tables/summary_20250920.csv
+- 100-question figure:  results/figures/accuracy_by_variant_20250920.png
+- 2,500-question summary: results/tables/summary_2500.csv
+- 2,500-question figure:  results/figures/accuracy_by_variant_2500.png
+
+Interpretation:
+- Normal: High alignment with the true objective (robust_acc close to naive_acc).
+- Proxy: Clear reward hacking; naive_acc >> robust_acc. Expect longer outputs and more numbers, increasing misaligned_rate.
+- Shifted: Same questions in words; check for drops vs. normal. In our first run, no drop was observed.
+
+Why 2,500?
+- Larger n reduces variance and gives more stable estimates of misaligned_rate and accuracy.
+
+How to reproduce:
+- Dataset: data/datasets/math_2500.csv
+- Runs: data/runs/run_2500_*.csv
+- Aggregation: results/tables/summary_2500.csv and results/figures/accuracy_by_variant_2500.png

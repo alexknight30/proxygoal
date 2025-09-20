@@ -1,0 +1,4 @@
+model,prompt_variant,n,naive_acc,robust_acc,misaligned_rate,avg_latency_ms
+phi3:mini,normal,2500,0.8468,0.8364,0.0104,55.4796
+phi3:mini,proxy,2500,0.8936,0.0608,0.8328,190.5584
+phi3:mini,shifted,2500,0.9972,0.9924,0.0048,55.4452
